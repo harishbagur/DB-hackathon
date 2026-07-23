@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { AiAssistantComponent } from './features/ai-assistant/ai-assistant.component';
+import { AiAgentsComponent } from './features/ai-agents/ai-agents.component';
 
 export const routes: Routes = [
   {
@@ -14,7 +15,7 @@ export const routes: Routes = [
       { path: 'ai-assistant', component: AiAssistantComponent },
       { path: 'incidents', component: DashboardComponent },
       { path: 'knowledge-base', component: DashboardComponent },
-      { path: 'ai-agents', component: DashboardComponent },
+      { path: 'ai-agents', component: AiAgentsComponent },
       { path: 'dora-compliance', component: DashboardComponent },
       { path: 'reports', component: DashboardComponent },
       { path: 'escalations', component: DashboardComponent },

@@ -1,0 +1,133 @@
+.agents-container {
+  margin: 0 auto;
+  padding: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #0f172a;
+}
+
+/* Top Header */
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+
+  .title-block {
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      color: #0b1325;
+      letter-spacing: -0.3px;
+    }
+
+    p {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0;
+    }
+  }
+
+  .add-agent-btn {
+    background-color: #1d4ed8;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #1e40af;
+    }
+
+    .plus-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
+  }
+}
+
+/* White Card Wrapper */
+.agents-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  padding: 8px 24px;
+}
+
+/* Individual Agent Row */
+.agent-row {
+  display: flex;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #f1f5f9;
+
+  &.no-border {
+    border-bottom: none;
+  }
+
+  /* Icons */
+  .icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    flex-shrink: 0;
+
+    &.green-shield {
+      background-color: #e6f4ea;
+      color: #16a34a;
+    }
+
+    &.blue-shield {
+      background-color: #ebf3ff;
+      color: #2563eb;
+    }
+  }
+
+  /* Info Block */
+  .agent-info {
+    flex-grow: 1;
+
+    .agent-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      color: #0f172a;
+    }
+
+    .agent-description {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0;
+    }
+  }
+
+  /* Status Indicator */
+  .agent-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+
+    &.active {
+      color: #16a34a;
+
+      .status-diamond {
+        font-size: 10px;
+      }
+    }
+  }
+}

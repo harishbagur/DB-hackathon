@@ -1,0 +1,43 @@
+<div class="agents-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="title-block">
+      <h1>AI Agents</h1>
+      <p>Manage and monitor AI agents</p>
+    </div>
+    <button class="add-agent-btn" (click)="onAddAgent()">
+      <span class="plus-icon">+</span> Add Agent
+    </button>
+  </div>
+
+  <!-- Agents List Card Container -->
+  <div class="agents-card">
+    <div class="agents-list">
+      @for (agent of agents(); track agent.id; let last = $last) {
+        <div class="agent-row" [class.no-border]="last">
+          
+          <!-- Shield Icon -->
+          <div class="icon-wrapper" [class]="agent.iconType">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </div>
+
+          <!-- Title & Description -->
+          <div class="agent-info">
+            <h3 class="agent-name">{{ agent.name }}</h3>
+            <p class="agent-description">{{ agent.description }}</p>
+          </div>
+
+          <!-- Status Indicator -->
+          <div class="agent-status" [class]="agent.status.toLowerCase()">
+            <span class="status-diamond">◆</span>
+            <span class="status-text">{{ agent.status }}</span>
+          </div>
+
+        </div>
+      }
+    </div>
+  </div>
+</div>
