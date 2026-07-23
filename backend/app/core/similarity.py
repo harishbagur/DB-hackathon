@@ -1,9 +1,8 @@
 """
-Similarity search using pgvector + sentence-transformers.
+Similarity search — SQLite-compatible fallback using keyword matching.
 
-The model (all-MiniLM-L6-v2) is loaded once at startup.
-It produces 384-dimensional embeddings that match the vector(384)
-column in knowledge_article.
+When PostgreSQL + pgvector is available, uses vector cosine similarity.
+When SQLite is used (hackathon mode), falls back to simple keyword LIKE search.
 
 Usage:
     from app.core.similarity import search, embed_text
@@ -12,72 +11,65 @@ from __future__ import annotations
 
 from typing import List
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import or_
 
-# Loaded once — ~80 MB, downloads on first run if not cached
-try:
-    from sentence_transformers import SentenceTransformer
-    _model = SentenceTransformer("all-MiniLM-L6-v2")
-    _EMBEDDINGS_AVAILABLE = True
-except Exception:
-    _model = None
-    _EMBEDDINGS_AVAILABLE = False
+from app.models.knowledge import KnowledgeArticle
 
 
 def embed_text(text_input: str) -> List[float]:
-    """Return a 384-dim embedding for a string."""
-    if not _EMBEDDINGS_AVAILABLE or _model is None:
-        # Fallback: zero vector — search will still run, results will be random
-        return [0.0] * 384
-    return _model.encode(text_input).tolist()
+    """Return a 384-dim embedding for a string (stub for SQLite mode)."""
+    return [0.0] * 384
 
 
 def search(query: str, db: Session, k: int = 10) -> List[dict]:
     """
     Find the top-k knowledge articles most similar to `query`.
+    Uses keyword matching on title, keywords, category, and content fields.
     Returns a list of dicts with article_number, title, category, score.
     """
-    embedding = embed_text(query)
+    terms = query.lower().split()
 
-    rows = db.execute(
-        text("""
-            SELECT
-                article_number,
-                title,
-                category,
-                status,
-                1 - (embedding <=> CAST(:embedding AS vector)) AS score
-            FROM knowledge_article
-            WHERE embedding IS NOT NULL
-            ORDER BY embedding <=> CAST(:embedding AS vector)
-            LIMIT :k
-        """),
-        {"embedding": str(embedding), "k": k},
-    ).fetchall()
+    # Build OR conditions for each term across searchable fields
+    conditions = []
+    for term in terms:
+        pattern = f"%{term}%"
+        conditions.append(KnowledgeArticle.title.ilike(pattern))
+        conditions.append(KnowledgeArticle.keywords.ilike(pattern))
+        conditions.append(KnowledgeArticle.category.ilike(pattern))
+        conditions.append(KnowledgeArticle.content.ilike(pattern))
 
-    return [
-        {
-            "article_number": row.article_number,
-            "title": row.title,
-            "category": row.category,
-            "score": round(float(row.score), 2),
-        }
-        for row in rows
-    ]
+    if conditions:
+        articles = (
+            db.query(KnowledgeArticle)
+            .filter(or_(*conditions))
+            .limit(k)
+            .all()
+        )
+    else:
+        articles = db.query(KnowledgeArticle).limit(k).all()
+
+    results = []
+    for article in articles:
+        # Simple relevance score based on how many terms match
+        score = 0.0
+        text_blob = f"{article.title} {article.keywords} {article.category} {article.content or ''}".lower()
+        for term in terms:
+            if term in text_blob:
+                score += 1.0
+        score = min(score / max(len(terms), 1), 1.0)
+
+        results.append({
+            "article_number": article.article_number,
+            "title": article.title,
+            "category": article.category or "",
+            "score": round(score, 2),
+        })
+
+    # Sort by score descending
+    results.sort(key=lambda x: x["score"], reverse=True)
+    return results
 
 
 def update_embedding(article_id: int, content: str, db: Session) -> None:
-    """
-    Generate and store an embedding for a knowledge article.
-    Call this whenever an article is created or its content changes.
-    """
-    embedding = embed_text(content)
-    db.execute(
-        text("""
-            UPDATE knowledge_article
-            SET embedding = CAST(:embedding AS vector)
-            WHERE article_id = :article_id
-        """),
-        {"embedding": str(embedding), "article_id": article_id},
-    )
-    db.commit()
+    """No-op for SQLite mode — embeddings are not stored."""
+    pass

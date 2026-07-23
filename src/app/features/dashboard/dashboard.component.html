@@ -39,7 +39,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of incidents()">
+          <tr *ngFor="let item of incidents()" (click)="triggerTriage(item.id)" style="cursor:pointer;">
             <td><a class="link-id">{{ item.id }}</a></td>
             <td class="font-medium">{{ item.title }}</td>
             <td><span class="badge-tag" [ngClass]="item.priority.toLowerCase()">{{ item.priority }}</span></td>
@@ -111,19 +111,12 @@
         <input type="text" placeholder="Search articles, solutions..." />
       </div>
       <div class="kb-list">
-        <div class="kb-item">
+        <div class="kb-item" *ngFor="let article of knowledgeArticles()">
           <div>
-            <a class="kb-id">KB-12451</a>
-            <p class="kb-title">VPN connection failure after patch</p>
+            <a class="kb-id">{{ article.id }}</a>
+            <p class="kb-title">{{ article.title }}</p>
           </div>
-          <span class="helpful-score text-green">98% helpful</span>
-        </div>
-        <div class="kb-item">
-          <div>
-            <a class="kb-id">KB-32910</a>
-            <p class="kb-title">VPN authentication issues</p>
-          </div>
-          <span class="helpful-score text-green">97% helpful</span>
+          <span class="helpful-score text-green">{{ article.helpful }}% helpful</span>
         </div>
       </div>
     </div>
@@ -145,19 +138,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td><a class="link-id">ESC1001</a></td>
-            <td><a class="link-id">INC548239</a></td>
-            <td>Windows Ops</td>
-            <td><span class="badge-tag critical">Critical</span></td>
-            <td>5 mins</td>
-          </tr>
-          <tr>
-            <td><a class="link-id">ESC1002</a></td>
-            <td><a class="link-id">INC548240</a></td>
-            <td>Network Team</td>
-            <td><span class="badge-tag high">High</span></td>
-            <td>15 mins</td>
+          <tr *ngFor="let esc of escalations()">
+            <td><a class="link-id">{{ esc.id }}</a></td>
+            <td><a class="link-id">{{ esc.incident }}</a></td>
+            <td>{{ esc.team }}</td>
+            <td><span class="badge-tag" [ngClass]="esc.priority.toLowerCase()">{{ esc.priority }}</span></td>
+            <td>{{ esc.eta }}</td>
           </tr>
         </tbody>
       </table>
@@ -180,22 +166,22 @@
       <div class="exec-grid">
         <div class="exec-card">
           <span class="exec-label">Automated Resolutions</span>
-          <div class="exec-val">87%</div>
+          <div class="exec-val">{{ execMetrics().automatedResolution }}</div>
           <span class="exec-trend positive">↑ 12% vs yesterday</span>
         </div>
         <div class="exec-card">
           <span class="exec-label">Manual Escalations</span>
-          <div class="exec-val">13%</div>
+          <div class="exec-val">{{ execMetrics().manualEscalation }}</div>
           <span class="exec-trend negative">↓ 4% vs yesterday</span>
         </div>
         <div class="exec-card">
           <span class="exec-label">Avg. Resolution Time</span>
-          <div class="exec-val">4m 22s</div>
+          <div class="exec-val">{{ execMetrics().avgResolutionTime }}</div>
           <span class="exec-trend positive">↓ 1m vs yesterday</span>
         </div>
         <div class="exec-card">
           <span class="exec-label">Critical Incidents</span>
-          <div class="exec-val">5</div>
+          <div class="exec-val">{{ execMetrics().criticalIncidents }}</div>
           <span class="exec-trend positive">↓ 2 vs yesterday</span>
         </div>
       </div>

@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, Text, Date
-from pgvector.sqlalchemy import Vector
 from app.database import Base
 
 
@@ -19,4 +18,4 @@ class KnowledgeArticle(Base):
     content            = Column(Text, nullable=True)
     status             = Column(String(20), default="approved")  # approved / draft
     source_incident_id = Column(Integer, nullable=True)
-    embedding          = Column(Vector(384), nullable=True)       # sentence-transformers dim
+    # embedding column removed — using keyword search for SQLite compatibility

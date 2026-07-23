@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/hausbank_incident"
+    DATABASE_URL: str = "sqlite:///./hausbank.db"
     ANTHROPIC_API_KEY: str = ""         # leave empty → agents run in mock mode
     ENVIRONMENT: str = "development"
 

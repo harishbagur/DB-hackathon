@@ -1,86 +1,104 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
-  Incident,
-  Agent,
-  Room,
-  RoomMessage,
-  KnowledgeArticle,
-  ExecutiveMetrics,
-  DoraCompliance,
-  Escalation
+  IncidentResponse,
+  TriageResponse,
+  AgentResponse,
+  ChatRoomResponse,
+  MessageResponse,
+  SendMessageRequest,
+  AddAgentRequest,
+  AddMemberRequest,
+  ApprovalRequest,
+  ArticleResponse,
+  ArticleSearchResult,
+  ExecutiveMetricsResponse,
+  DoraResponse,
+  EscalationResponse
 } from '../models/api.models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private readonly basePath = '/api';
 
   constructor(private http: HttpClient) {}
 
-  // Incidents
-  getIncidents(): Observable<Incident[]> {
-    return this.http.get<Incident[]>(`${this.basePath}/incidents`);
+  // ─── Incidents ───────────────────────────────────────────
+
+  getIncidents(): Observable<IncidentResponse[]> {
+    return this.http.get<IncidentResponse[]>('/api/incidents');
   }
 
-  getIncident(id: string): Observable<Incident> {
-    return this.http.get<Incident>(`${this.basePath}/incidents/${id}`);
+  getIncident(id: number): Observable<IncidentResponse> {
+    return this.http.get<IncidentResponse>(`/api/incidents/${id}`);
   }
 
-  triageIncident(id: string): Observable<any> {
-    return this.http.post<any>(`${this.basePath}/incidents/${id}/triage`, {});
+  triageIncident(id: number): Observable<TriageResponse> {
+    return this.http.post<TriageResponse>(`/api/incidents/${id}/triage`, {});
   }
 
-  // Agents
-  getAgents(): Observable<Agent[]> {
-    return this.http.get<Agent[]>(`${this.basePath}/agents`);
+  // ─── Agents ──────────────────────────────────────────────
+
+  getAgents(): Observable<AgentResponse[]> {
+    return this.http.get<AgentResponse[]>('/api/agents');
   }
 
-  // Chat Room
-  getRoom(incidentId: string): Observable<Room> {
-    return this.http.get<Room>(`${this.basePath}/incidents/${incidentId}/room`);
+  // ─── Chat Room ───────────────────────────────────────────
+
+  getRoom(incidentId: number): Observable<ChatRoomResponse> {
+    return this.http.get<ChatRoomResponse>(`/api/incidents/${incidentId}/room`);
   }
 
-  addAgentToRoom(incidentId: string, payload: any): Observable<any> {
-    return this.http.post<any>(`${this.basePath}/incidents/${incidentId}/room/agents`, payload);
+  addAgentToRoom(incidentId: number, payload: AddAgentRequest): Observable<any> {
+    return this.http.post(`/api/incidents/${incidentId}/room/agents`, payload);
   }
 
-  addMemberToRoom(incidentId: string, payload: any): Observable<any> {
-    return this.http.post<any>(`${this.basePath}/incidents/${incidentId}/room/members`, payload);
+  addMemberToRoom(incidentId: number, payload: AddMemberRequest): Observable<any> {
+    return this.http.post(`/api/incidents/${incidentId}/room/members`, payload);
   }
 
-  sendMessage(incidentId: string, payload: any): Observable<any> {
-    return this.http.post<any>(`${this.basePath}/incidents/${incidentId}/room/messages`, payload);
+  sendMessage(incidentId: number, payload: SendMessageRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`/api/incidents/${incidentId}/room/messages`, payload);
   }
 
-  // Knowledge
-  getKnowledgeArticles(): Observable<KnowledgeArticle[]> {
-    return this.http.get<KnowledgeArticle[]>(`${this.basePath}/knowledge`);
+  handleApproval(incidentId: number, payload: ApprovalRequest): Observable<any> {
+    return this.http.post(`/api/incidents/${incidentId}/room/approve`, payload);
   }
 
-  searchKnowledge(query: string): Observable<KnowledgeArticle[]> {
-    return this.http.get<KnowledgeArticle[]>(`${this.basePath}/knowledge/search`, {
-      params: { q: query }
-    });
+  getAssignmentGroup(incidentId: number): Observable<any> {
+    return this.http.get(`/api/incidents/${incidentId}/escalation/group`);
   }
 
-  approveKnowledgeArticle(id: string): Observable<any> {
-    return this.http.patch<any>(`${this.basePath}/knowledge/${id}/approve`, {});
+  // ─── Knowledge ───────────────────────────────────────────
+
+  getKnowledgeArticles(): Observable<ArticleResponse[]> {
+    return this.http.get<ArticleResponse[]>('/api/knowledge');
   }
 
-  // Dashboard
-  getExecutiveMetrics(): Observable<ExecutiveMetrics> {
-    return this.http.get<ExecutiveMetrics>(`${this.basePath}/dashboard/executive`);
+  searchKnowledge(query: string): Observable<ArticleSearchResult[]> {
+    const params = new HttpParams().set('q', query);
+    return this.http.get<ArticleSearchResult[]>('/api/knowledge/search', { params });
   }
 
-  getDoraScores(): Observable<DoraCompliance> {
-    return this.http.get<DoraCompliance>(`${this.basePath}/dashboard/dora`);
+  approveKnowledgeArticle(id: number): Observable<ArticleResponse> {
+    return this.http.patch<ArticleResponse>(`/api/knowledge/${id}/approve`, {});
   }
 
-  // Escalation
-  getEscalation(incidentId: string): Observable<Escalation> {
-    return this.http.get<Escalation>(`${this.basePath}/incidents/${incidentId}/escalation`);
+  // ─── Dashboard ───────────────────────────────────────────
+
+  getExecutiveMetrics(): Observable<ExecutiveMetricsResponse> {
+    return this.http.get<ExecutiveMetricsResponse>('/api/dashboard/executive');
+  }
+
+  getDoraScores(): Observable<DoraResponse> {
+    return this.http.get<DoraResponse>('/api/dashboard/dora');
+  }
+
+  // ─── Escalation ──────────────────────────────────────────
+
+  getEscalation(incidentId: number): Observable<EscalationResponse> {
+    return this.http.get<EscalationResponse>(`/api/incidents/${incidentId}/escalation`);
   }
 }

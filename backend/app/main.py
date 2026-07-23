@@ -1,12 +1,45 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import incidents, agents, chat, knowledge, dashboard, websocket
+from app.database import engine, Base, SessionLocal
+import app.models.user
+import app.models.incident
+import app.models.agent
+import app.models.investigation
+import app.models.knowledge
+import app.models.escalation
+import app.models.compliance
+import app.models.metrics
+import app.models.chat
+import app.models.playbook
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Create tables and seed data on startup."""
+    Base.metadata.create_all(bind=engine)
+    print("[startup] Tables created.")
+
+    # Seed demo data if DB is empty
+    db = SessionLocal()
+    try:
+        from app.seed import seed_db
+        seed_db(db)
+    finally:
+        db.close()
+
+    yield  # app runs
+
+    # Shutdown — nothing to clean up
+
 
 app = FastAPI(
     title="Hausbank Autonomous Incident Resolution",
     description="Multi-agent AI system for automated ServiceNow incident handling",
     version="1.0.0",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
