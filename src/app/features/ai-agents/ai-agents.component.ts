@@ -27,39 +27,53 @@ export class AiAgentsComponent {
     },
     {
       id: '2',
+      name: 'Healer Agent',
+      description: 'Self healing the problems',
+      status: 'Active',
+      iconType: 'blue-shield'
+    },
+    {
+      id: '3',
+      name: 'Listener Agent',
+      description: 'Listen the activity',
+      status: 'Active',
+      iconType: 'blue-shield'
+    },
+    {
+      id: '4',
       name: 'Knowledge Agent',
       description: 'Searches and recommends knowledge articles',
       status: 'Active',
       iconType: 'blue-shield'
     },
     {
-      id: '3',
+      id: '5',
       name: 'Windows Agent',
       description: 'Monitors and resolves Windows related issues',
       status: 'Active',
       iconType: 'blue-shield'
     },
     {
-      id: '4',
+      id: '6',
       name: 'Network Agent',
       description: 'Analyzes network logs and performance',
       status: 'Active',
       iconType: 'blue-shield'
     },
-    {
-      id: '5',
-      name: 'Vulnerability Agent',
-      description: 'Checks vulnerabilities and suggests fixes',
-      status: 'Active',
-      iconType: 'blue-shield'
-    },
-    {
-      id: '6',
-      name: 'Compliance Agent',
-      description: 'Monitors compliance and regulatory controls',
-      status: 'Active',
-      iconType: 'blue-shield'
-    }
+    // {
+    //   id: '7',
+    //   name: 'Vulnerability Agent',
+    //   description: 'Checks vulnerabilities and suggests fixes',
+    //   status: 'Active',
+    //   iconType: 'blue-shield'
+    // },
+    // {
+    //   id: '8',
+    //   name: 'Compliance Agent',
+    //   description: 'Monitors compliance and regulatory controls',
+    //   status: 'Active',
+    //   iconType: 'blue-shield'
+    // }
   ]);
 
   onAddAgent() {
