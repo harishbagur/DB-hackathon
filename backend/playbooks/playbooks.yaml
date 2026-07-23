@@ -1,0 +1,28 @@
+# Healer agent playbook library
+# These are also seeded into the playbook DB table via seed.sql
+# The healer agent loads from DB; this file is the source of truth for humans
+
+playbooks:
+  - name: restart-service
+    platform: unix
+    trigger_keywords: [service, restart, stopped, failed, not running]
+    action_tier: 1
+    script: "sudo systemctl restart {service_name}"
+    verify_command: "systemctl is-active {service_name}"
+    description: Restart a stopped or failed system service and verify it comes back up
+
+  - name: clear-disk-space
+    platform: unix
+    trigger_keywords: [disk, full, space, "no space", storage, "100%"]
+    action_tier: 1
+    script: "find /var/log -name '*.log' -mtime +7 -exec gzip {} \\; && journalctl --vacuum-time=3d"
+    verify_command: "df -h / | awk 'NR==2{print $5}'"
+    description: Compress old logs and vacuum journald to recover disk space
+
+  - name: flush-dns-cache
+    platform: windows
+    trigger_keywords: [dns, "name resolution", "cannot resolve", network, connectivity]
+    action_tier: 1
+    script: "ipconfig /flushdns && net stop \"DNS Client\" && net start \"DNS Client\""
+    verify_command: "nslookup google.com"
+    description: Flush DNS cache and restart DNS client service on Windows
