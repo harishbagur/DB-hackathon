@@ -1,12 +1,18 @@
 <div class="app-container">
   <!-- Left Sidebar -->
   <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="#0018A8"><path d="M3 3h18v18H3V3zm15 15V6H6v12h12z"/></svg>
-      </div>
-      <span class="brand-title">Deutsche Bank</span>
-    </div>
+<div class="brand">
+  <div class="brand-logo">
+    <img 
+      src="assets/logo/db_navbar_logo.png" 
+      alt="Deutsche Bank Logo" 
+      width="28" 
+      height="28" 
+      class="logo-img"
+    />
+  </div>
+  <span class="brand-title">Deutsche Bank</span>
+</div>
 
     <nav class="nav-menu">
       <a *ngFor="let item of navItems" 
@@ -18,7 +24,7 @@
       </a>
     </nav>
 
-    <div class="sidebar-footer">
+    <!-- <div class="sidebar-footer">
       <div class="theme-selector">
         <span class="icon-sun"></span>
         <span>Theme</span>
@@ -27,7 +33,7 @@
       <div class="copyright">
         © 2026 Deutsche Bank<br>All rights reserved.
       </div>
-    </div>
+    </div> -->
   </aside>
 
   <!-- Right Main Area -->

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
+import { AiAssistantComponent } from './features/ai-assistant/ai-assistant.component';
 
 export const routes: Routes = [
   {
@@ -10,7 +11,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       // Placeholder routes for navigation links
-      { path: 'ai-assistant', component: DashboardComponent },
+      { path: 'ai-assistant', component: AiAssistantComponent },
       { path: 'incidents', component: DashboardComponent },
       { path: 'knowledge-base', component: DashboardComponent },
       { path: 'ai-agents', component: DashboardComponent },
