@@ -1,0 +1,74 @@
+<div class="app-container">
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="#0018A8"><path d="M3 3h18v18H3V3zm15 15V6H6v12h12z"/></svg>
+      </div>
+      <span class="brand-title">Deutsche Bank</span>
+    </div>
+
+    <nav class="nav-menu">
+      <a *ngFor="let item of navItems" 
+         [routerLink]="item.route" 
+         routerLinkActive="active" 
+         class="nav-item">
+        <span class="nav-icon" [ngClass]="'icon-' + item.icon"></span>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="theme-selector">
+        <span class="icon-sun"></span>
+        <span>Theme</span>
+        <span class="chevron-down">▼</span>
+      </div>
+      <div class="copyright">
+        © 2026 Deutsche Bank<br>All rights reserved.
+      </div>
+    </div>
+  </aside>
+
+  <!-- Right Main Area -->
+  <div class="main-wrapper">
+    <!-- Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <div class="shield-badge">
+          <span class="shield-icon">🛡️</span>
+          <h2>AI Cyber Hygiene Assistant</h2>
+        </div>
+      </div>
+
+      <div class="header-center">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search incidents, KB articles, users..." />
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button class="icon-button notification-btn">
+          🔔
+          <span class="badge">8</span>
+        </button>
+        <button class="icon-button">❓</button>
+
+        <div class="user-profile">
+          <div class="avatar">HB</div>
+          <div class="user-info">
+            <span class="user-name">Harish Bagur</span>
+            <span class="user-role">Vice President</span>
+          </div>
+          <span class="chevron-down">▼</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dynamic Content Area -->
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
