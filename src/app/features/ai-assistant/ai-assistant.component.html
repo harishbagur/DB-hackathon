@@ -16,36 +16,58 @@
       </div> -->
     </div>
 
-    <!-- Hero Banner -->
-    <div class="hero-section">
-      <h1>Hello,</h1>
-      <h2>How can I help you secure your environment today?</h2>
-      
-      <div class="input-card">
-        <textarea 
-          [ngModel]="userPrompt()" 
-          (ngModelChange)="userPrompt.set($event)"
-          placeholder="As anything about your production environment..."></textarea>
-        
-        <div class="input-actions">
-          <!-- Inline SVG Paperclip Attachment Icon -->
-          <button class="icon-btn attachment-btn" type="button" title="Attach file">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57a4 4 0 1 1 5.66 5.66l-8.59 8.58a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-            </svg>
-          </button>
+    <!-- Chat Area -->
+    <div class="chat-area">
+      <!-- Hero Banner (Shows only if chat history is empty) -->
+      <div class="hero-section" *ngIf="chatHistory().length === 0">
+        <h1>Hello,</h1>
+        <h2>How can I help you secure your environment today?</h2>
+      </div>
 
-          <!-- Blue Send Arrow Button -->
-          <button 
-            class="send-btn" 
-            [class.visible]="userPrompt().trim().length > 0" 
-            (click)="onSend()"
-            type="button">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-              <polyline points="12 5 19 12 12 19"></polyline>
-            </svg>
-          </button>
+      <!-- Chat Log -->
+      <div class="chat-log" *ngIf="chatHistory().length > 0">
+        @for (msg of chatHistory(); track $index) {
+          <div class="chat-message" [class.user]="msg.role === 'user'">
+            <div class="message-bubble">
+              {{ msg.text }}
+            </div>
+          </div>
+        }
+        <div class="chat-message model" *ngIf="isGenerating()">
+          <div class="message-bubble loading">
+            <span class="dot-typing"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-container">
+        <div class="input-card">
+          <textarea 
+            [ngModel]="userPrompt()" 
+            (ngModelChange)="userPrompt.set($event)"
+            (keydown.enter)="onSend(); $event.preventDefault()"
+            [disabled]="isGenerating()"
+            placeholder="Ask anything about your production environment..."></textarea>
+          
+          <div class="input-actions">
+            <button class="icon-btn attachment-btn" type="button" title="Attach file">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57a4 4 0 1 1 5.66 5.66l-8.59 8.58a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+              </svg>
+            </button>
+
+            <button 
+              class="send-btn" 
+              [class.visible]="userPrompt().trim().length > 0 && !isGenerating()" 
+              (click)="onSend()"
+              type="button">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>

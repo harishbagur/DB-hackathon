@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import incidents, agents, chat, knowledge, dashboard, websocket
+from app.routers import incidents, agents, chat, knowledge, dashboard, websocket, gemini
 from app.database import engine, Base, SessionLocal
 import app.models.user
 import app.models.incident
@@ -14,7 +14,6 @@ import app.models.compliance
 import app.models.metrics
 import app.models.chat
 import app.models.playbook
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,9 +30,6 @@ async def lifespan(app: FastAPI):
         db.close()
 
     yield  # app runs
-
-    # Shutdown — nothing to clean up
-
 
 app = FastAPI(
     title="Hausbank Autonomous Incident Resolution",
@@ -56,10 +52,10 @@ app.include_router(agents.router,     prefix="/api/agents",     tags=["Agents"])
 app.include_router(chat.router,       prefix="/api/incidents",  tags=["Chat Room"])
 app.include_router(knowledge.router,  prefix="/api/knowledge",  tags=["Knowledge"])
 app.include_router(dashboard.router,  prefix="/api/dashboard",  tags=["Dashboard"])
+app.include_router(gemini.router,     prefix="/api/gemini",     tags=["Gemini AI"])
 
 # WebSocket — real-time chat events
 app.include_router(websocket.router, tags=["WebSocket"])
-
 
 @app.get("/health", tags=["Health"])
 def health():

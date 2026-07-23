@@ -101,4 +101,10 @@ export class ApiService {
   getEscalation(incidentId: number): Observable<EscalationResponse> {
     return this.http.get<EscalationResponse>(`/api/incidents/${incidentId}/escalation`);
   }
+
+  // ─── Gemini Integration ──────────────────────────────────
+
+  chatGemini(message: string, history: any[] = []): Observable<{ response: string }> {
+    return this.http.post<{ response: string }>('/api/gemini/chat', { message, history });
+  }
 }

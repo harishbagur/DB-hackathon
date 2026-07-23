@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ApiService } from '../../core/services/api.service';
 
 export interface Incident {
   id: string;
@@ -20,6 +21,11 @@ export interface Investigation {
   avatarColor?: string;
 }
 
+export interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
+}
+
 @Component({
   selector: 'app-ai-assistant',
   standalone: true,
@@ -28,7 +34,11 @@ export interface Investigation {
   styleUrls: ['./ai-assistant.component.scss']
 })
 export class AiAssistantComponent {
+  private api = inject(ApiService);
+  
   userPrompt = signal<string>('');
+  isGenerating = signal<boolean>(false);
+  chatHistory = signal<ChatMessage[]>([]);
 
   liveIncidents = signal<Incident[]>([
     {
@@ -75,11 +85,35 @@ export class AiAssistantComponent {
 
   clearWindow() {
     this.userPrompt.set('');
+    this.chatHistory.set([]);
+  }
+
+  setSuggestion(suggestion: string) {
+    this.userPrompt.set(suggestion);
+    this.onSend();
   }
 
   onSend() {
-    if (!this.userPrompt().trim()) return;
-    // Process input query
-    console.log('Submitted query:', this.userPrompt());
+    const prompt = this.userPrompt().trim();
+    if (!prompt || this.isGenerating()) return;
+
+    // Add user message to UI
+    const currentHistory = this.chatHistory();
+    this.chatHistory.set([...currentHistory, { role: 'user', text: prompt }]);
+    this.userPrompt.set('');
+    this.isGenerating.set(true);
+
+    // Call API with history (excluding the new message we just added so the backend treats it as the new prompt)
+    this.api.chatGemini(prompt, currentHistory).subscribe({
+      next: (res) => {
+        this.chatHistory.update(history => [...history, { role: 'model', text: res.response }]);
+        this.isGenerating.set(false);
+      },
+      error: (err) => {
+        console.error('Gemini error:', err);
+        this.chatHistory.update(history => [...history, { role: 'model', text: 'Error connecting to Vertex AI. Please check your network and ADC credentials.' }]);
+        this.isGenerating.set(false);
+      }
+    });
   }
 }
