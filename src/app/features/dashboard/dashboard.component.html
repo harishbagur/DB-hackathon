@@ -1,0 +1,204 @@
+<div class="dashboard-container">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p class="welcome-text">Welcome back, Harish!</p>
+  </div>
+
+  <!-- KPI Cards Row -->
+  <section class="kpi-grid">
+    <div *ngFor="let kpi of kpis()" class="kpi-card">
+      <div class="kpi-icon-wrapper" [ngClass]="kpi.type">
+        <span class="icon"></span>
+      </div>
+      <div class="kpi-content">
+        <span class="kpi-title">{{ kpi.title }}</span>
+        <div class="kpi-value">{{ kpi.value }}</div>
+        <div class="kpi-change" [class.positive]="kpi.isPositive" [class.negative]="!kpi.isPositive">
+          {{ kpi.isPositive ? '↑' : '↑' }} {{ kpi.change }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Middle Grid Section -->
+  <section class="middle-grid">
+    <!-- Recent Incidents Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Recent Incidents</h3>
+        <button class="btn-text">View all ▾</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of incidents()">
+            <td><a class="link-id">{{ item.id }}</a></td>
+            <td class="font-medium">{{ item.title }}</td>
+            <td><span class="badge-tag" [ngClass]="item.priority.toLowerCase()">{{ item.priority }}</span></td>
+            <td><span class="badge-status" [ngClass]="item.status.toLowerCase()">{{ item.status }}</span></td>
+            <td class="text-muted">{{ item.time }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- AI Assistant Panel -->
+    <div class="panel ai-assistant-panel">
+      <div class="panel-header">
+        <h3>AI Assistant</h3>
+        <button class="btn-outline">New Chat</button>
+      </div>
+      <div class="prompt-box">
+        <span class="sparkle-icon">✨</span>
+        <div>
+          <strong>How can I help you today?</strong>
+          <p>Ask me about incidents, solutions, or best practices.</p>
+        </div>
+      </div>
+      <div class="suggested-actions">
+        <button class="action-btn">Why is VPN not working? <span>›</span></button>
+        <button class="action-btn">Show similar incidents <span>›</span></button>
+        <button class="action-btn">Find KB articles on VPN <span>›</span></button>
+        <button class="action-btn">Suggest resolution <span>›</span></button>
+      </div>
+      <div class="chat-input-wrapper">
+        <input type="text" placeholder="Type your question..." />
+        <button class="send-btn">➤</button>
+      </div>
+    </div>
+
+    <!-- AI Multi-Agent Investigation Panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>AI Multi-Agent Investigation</h3>
+        <button class="btn-text">View all ▾</button>
+      </div>
+      <div class="agent-list">
+        <div *ngFor="let agent of agents()" class="agent-item">
+          <div class="agent-icon">🛡️</div>
+          <div class="agent-info">
+            <span class="agent-name">{{ agent.name }}</span>
+            <span class="agent-task">{{ agent.task }}</span>
+          </div>
+          <div class="agent-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" [style.width.%]="agent.progress" [class.partial]="!agent.isDone"></div>
+            </div>
+            <span class="progress-percentage">{{ agent.progress }}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom Grid Section -->
+  <section class="bottom-grid">
+    <!-- Knowledge Base -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Knowledge Base</h3>
+        <button class="btn-text">View all</button>
+      </div>
+      <div class="search-input-sm">
+        <input type="text" placeholder="Search articles, solutions..." />
+      </div>
+      <div class="kb-list">
+        <div class="kb-item">
+          <div>
+            <a class="kb-id">KB-12451</a>
+            <p class="kb-title">VPN connection failure after patch</p>
+          </div>
+          <span class="helpful-score text-green">98% helpful</span>
+        </div>
+        <div class="kb-item">
+          <div>
+            <a class="kb-id">KB-32910</a>
+            <p class="kb-title">VPN authentication issues</p>
+          </div>
+          <span class="helpful-score text-green">97% helpful</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escalation Queue -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Escalation Queue</h3>
+        <button class="btn-text">View all</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Incident</th>
+            <th>Assigned To</th>
+            <th>Priority</th>
+            <th>ETA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a class="link-id">ESC1001</a></td>
+            <td><a class="link-id">INC548239</a></td>
+            <td>Windows Ops</td>
+            <td><span class="badge-tag critical">Critical</span></td>
+            <td>5 mins</td>
+          </tr>
+          <tr>
+            <td><a class="link-id">ESC1002</a></td>
+            <td><a class="link-id">INC548240</a></td>
+            <td>Network Team</td>
+            <td><span class="badge-tag high">High</span></td>
+            <td>15 mins</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="alert-box-blue">
+        <span class="user-group-icon">👥</span>
+        <div>
+          <strong>AI couldn't resolve automatically</strong>
+          <p>Requires infrastructure approval and manual verification.</p>
+        </div>
+        <span class="chevron-right">›</span>
+      </div>
+    </div>
+
+    <!-- Executive Overview -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Executive Overview</h3>
+        <button class="btn-outline-sm">Today ▾</button>
+      </div>
+      <div class="exec-grid">
+        <div class="exec-card">
+          <span class="exec-label">Automated Resolutions</span>
+          <div class="exec-val">87%</div>
+          <span class="exec-trend positive">↑ 12% vs yesterday</span>
+        </div>
+        <div class="exec-card">
+          <span class="exec-label">Manual Escalations</span>
+          <div class="exec-val">13%</div>
+          <span class="exec-trend negative">↓ 4% vs yesterday</span>
+        </div>
+        <div class="exec-card">
+          <span class="exec-label">Avg. Resolution Time</span>
+          <div class="exec-val">4m 22s</div>
+          <span class="exec-trend positive">↓ 1m vs yesterday</span>
+        </div>
+        <div class="exec-card">
+          <span class="exec-label">Critical Incidents</span>
+          <div class="exec-val">5</div>
+          <span class="exec-trend positive">↓ 2 vs yesterday</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
