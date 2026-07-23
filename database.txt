@@ -1,0 +1,232 @@
+Below is a PostgreSQL script with CREATE TABLE and INSERT statements containing realistic mock data.
+
+1. User Table
+CREATE TABLE app_user (
+    user_id SERIAL PRIMARY KEY,
+    employee_id VARCHAR(20) UNIQUE,
+    full_name VARCHAR(100),
+    email VARCHAR(100),
+    department VARCHAR(50),
+    role VARCHAR(50),
+    location VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+INSERT INTO app_user
+(employee_id,full_name,email,department,role,location)
+VALUES
+('DB1001','Harish Bagur','harish.bagur@db.com','TDI','Vice President','Bangalore'),
+('DB1002','John Smith','john.smith@db.com','Security','Engineer','London'),
+('DB1003','Emily Brown','emily.brown@db.com','Infrastructure','Analyst','Frankfurt');
+2. Incident Table
+CREATE TABLE incident (
+    incident_id SERIAL PRIMARY KEY,
+    incident_number VARCHAR(30),
+    title VARCHAR(200),
+    description TEXT,
+    priority VARCHAR(20),
+    status VARCHAR(30),
+    affected_users INTEGER,
+    application VARCHAR(100),
+    root_cause VARCHAR(200),
+    created_by INTEGER REFERENCES app_user(user_id),
+    created_at TIMESTAMP,
+    resolved_at TIMESTAMP
+);
+INSERT INTO incident
+(incident_number,title,description,priority,status,
+affected_users,application,root_cause,created_by,
+created_at,resolved_at)
+VALUES
+('INC548239',
+'VPN Authentication Failure',
+'Users unable to login after security patch',
+'Critical',
+'Investigating',
+128,
+'Global VPN',
+'Authentication Service',
+1,
+NOW()-INTERVAL '30 minutes',
+NULL),
+
+('INC548240',
+'Windows Patch Failure',
+'Patch installation failed',
+'High',
+'Resolved',
+52,
+'Windows Server',
+'KB Package',
+2,
+NOW()-INTERVAL '1 day',
+NOW()-INTERVAL '22 hours');
+3. AI Agent Table
+CREATE TABLE ai_agent (
+    agent_id SERIAL PRIMARY KEY,
+    agent_name VARCHAR(100),
+    agent_type VARCHAR(50),
+    status VARCHAR(20),
+    confidence_score NUMERIC(5,2)
+);
+INSERT INTO ai_agent
+(agent_name,agent_type,status,confidence_score)
+VALUES
+('Incident Agent','Incident','Completed',98),
+('Knowledge Agent','Knowledge','Completed',96),
+('Windows Agent','Infrastructure','Running',82),
+('Network Agent','Network','Completed',94),
+('Vulnerability Agent','Security','Completed',97);
+4. AI Investigation
+CREATE TABLE ai_investigation (
+    investigation_id SERIAL PRIMARY KEY,
+    incident_id INTEGER REFERENCES incident(incident_id),
+    agent_id INTEGER REFERENCES ai_agent(agent_id),
+    findings TEXT,
+    recommendation TEXT,
+    execution_time INTEGER
+);
+INSERT INTO ai_investigation
+(incident_id,agent_id,findings,recommendation,execution_time)
+VALUES
+(1,1,
+'Incident pattern matched previous VPN issue',
+'Restart Authentication Service',
+18),
+
+(1,2,
+'Found similar KB Article',
+'Refer KB-12451',
+5),
+
+(1,3,
+'Windows service stopped',
+'Restart Service',
+11);
+5. Knowledge Base
+CREATE TABLE knowledge_article (
+    article_id SERIAL PRIMARY KEY,
+    article_number VARCHAR(30),
+    title VARCHAR(200),
+    category VARCHAR(100),
+    keywords TEXT,
+    helpful_percentage INTEGER,
+    updated_date DATE
+);
+INSERT INTO knowledge_article
+(article_number,title,category,keywords,
+helpful_percentage,updated_date)
+VALUES
+('KB-12451',
+'VPN Authentication Failure after Patch',
+'VPN',
+'VPN,Authentication',
+98,
+CURRENT_DATE),
+
+('KB-32910',
+'Windows Authentication Error',
+'Windows',
+'Authentication,Windows',
+96,
+CURRENT_DATE),
+
+('KB-45781',
+'Restart VPN Service',
+'Network',
+'VPN,Restart',
+97,
+CURRENT_DATE);
+6. DORA Compliance
+CREATE TABLE dora_compliance (
+    compliance_id SERIAL PRIMARY KEY,
+    operational_resilience NUMERIC(5,2),
+    ict_risk NUMERIC(5,2),
+    incident_management NUMERIC(5,2),
+    business_continuity NUMERIC(5,2),
+    third_party_risk NUMERIC(5,2),
+    overall_score NUMERIC(5,2),
+    audit_ready BOOLEAN
+);
+INSERT INTO dora_compliance
+VALUES
+(
+1,
+98,
+95,
+96,
+97,
+94,
+96,
+TRUE
+);
+7. Human Escalation
+CREATE TABLE escalation (
+    escalation_id SERIAL PRIMARY KEY,
+    incident_id INTEGER REFERENCES incident(incident_id),
+    assigned_team VARCHAR(100),
+    engineer_name VARCHAR(100),
+    reason TEXT,
+    estimated_wait INTEGER,
+    status VARCHAR(50)
+);
+INSERT INTO escalation
+(incident_id,assigned_team,engineer_name,
+reason,estimated_wait,status)
+VALUES
+(
+1,
+'Windows Operations',
+'John Smith',
+'Requires Infrastructure Approval',
+5,
+'Pending'
+);
+8. Executive Dashboard Metrics
+CREATE TABLE executive_metrics (
+    metric_id SERIAL PRIMARY KEY,
+    metric_date DATE,
+    automated_resolution NUMERIC(5,2),
+    manual_escalation NUMERIC(5,2),
+    avg_resolution_minutes INTEGER,
+    critical_incidents INTEGER,
+    dora_score NUMERIC(5,2),
+    cyber_hygiene_score NUMERIC(5,2)
+);
+INSERT INTO executive_metrics
+(metric_date,
+automated_resolution,
+manual_escalation,
+avg_resolution_minutes,
+critical_incidents,
+dora_score,
+cyber_hygiene_score)
+VALUES
+(
+CURRENT_DATE,
+87,
+13,
+4,
+5,
+97,
+96
+);
+
+
+Entity Relationship (ER) Overview
+User
+ │
+ ├──────────────┐
+ │              │
+ │          Incident
+ │              │
+ │              ├────────── AI Investigation
+ │              │               │
+ │              │               │
+ │              │           AI Agent
+ │              │
+ │              ├────────── Escalation
+ │              │
+ │              └────────── Knowledge Articles (matched)
+ │
+ └────────────── Executive Metrics
+
